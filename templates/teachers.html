@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachers List</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-box span {
+            font-size: 20px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #34495e;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+
+        .content {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .search-box {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+            color: #34495e;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            background: #3498db;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-state h2 {
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👨‍🏫 Teachers List</h1>
+            <div class="header-stats">
+                <div class="stat-box">
+                    <strong>Total Teachers:</strong> <span id="totalCount">0</span>
+                </div>
+            </div>
+            <div class="nav-buttons">
+                <a href="/teacher-register" class="btn btn-primary">➕ Add Teacher</a>
+                <a href="/" class="btn btn-secondary">← Home</a>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search by name, email, or subject...">
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table id="teachersTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Subject</th>
+                            <th>Registered</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+                <div id="emptyState" class="empty-state">
+                    <h2>No Teachers Registered</h2>
+                    <p>Click "Add Teacher" to register</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allTeachers = [];
+
+        async function loadTeachers() {
+            try {
+                const response = await fetch('/api/teachers');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    allTeachers = data.teachers;
+                    document.getElementById('totalCount').textContent = data.total;
+                    renderTable(allTeachers);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function renderTable(teachers) {
+            const tableBody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            if (teachers.length === 0) {
+                tableBody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            tableBody.innerHTML = teachers.map(t => `
+                <tr>
+                    <td>#${t.id}</td>
+                    <td><strong>${t.name}</strong></td>
+                    <td><a href="mailto:${t.email}">${t.email}</a></td>
+                    <td><a href="tel:${t.phone}">${t.phone}</a></td>
+                    <td><span class="badge">${t.subject}</span></td>
+                    <td>${new Date(t.registered_at).toLocaleDateString()}</td>
+                    <td><button class="btn btn-danger" onclick="deleteTeacher(${t.id})">Delete</button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteTeacher(id) {
+            if (confirm('Delete this teacher?')) {
+                try {
+                    const response = await fetch(`/api/teacher/${id}`, { method: 'DELETE' });
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        loadTeachers();
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('keyup', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allTeachers.filter(t => 
+                t.name.toLowerCase().includes(query) ||
+                t.email.toLowerCase().includes(query) ||
+                t.subject.toLowerCase().includes(query)
+            );
+            renderTable(filtered);
+        });
+
+        loadTeachers();
+    </script>
+</body>
+</html>

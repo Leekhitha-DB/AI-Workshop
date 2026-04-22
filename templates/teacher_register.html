@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Registration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input.error, select.error {
+            border-color: #e74c3c;
+            background-color: #fadbd8;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .help-text {
+            color: #7f8c8d;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-reset {
+            background: #ecf0f1;
+            color: #34495e;
+        }
+
+        .btn-reset:hover {
+            background: #bdc3c7;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .nav-links a {
+            flex: 1;
+            padding: 10px;
+            background: #ecf0f1;
+            color: #34495e;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .nav-links a:hover {
+            background: #bdc3c7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👨‍🏫 Teacher Registration</h1>
+            <p>Register as a teacher</p>
+        </div>
+
+        <div class="content">
+            <div class="success-message" id="successMessage">
+                <strong>✓ Success!</strong> <span id="successText"></span>
+            </div>
+
+            <form id="teacherForm">
+                <div class="form-group">
+                    <label for="name">Full Name <span class="required">*</span></label>
+                    <input type="text" id="name" placeholder="Enter your full name" maxlength="50">
+                    <div class="error-message" id="nameError"></div>
+                    <div class="help-text">Min 2, Max 50 characters</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" placeholder="your.email@example.com">
+                    <div class="error-message" id="emailError"></div>
+                    <div class="help-text">Must be a valid email format</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number <span class="required">*</span></label>
+                    <input type="tel" id="phone" placeholder="+91-9876543210">
+                    <div class="error-message" id="phoneError"></div>
+                    <div class="help-text">Minimum 10 digits</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject/Class <span class="required">*</span></label>
+                    <select id="subject">
+                        <option value="">-- Select Subject --</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="English">English</option>
+                        <option value="Science">Science</option>
+                        <option value="History">History</option>
+                        <option value="Geography">Geography</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Biology">Biology</option>
+                        <option value="Economics">Economics</option>
+                    </select>
+                    <div class="error-message" id="subjectError"></div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-submit">Register Now</button>
+                    <button type="reset" class="btn-reset">Clear</button>
+                </div>
+
+                <div class="nav-links">
+                    <a href="/">← Home</a>
+                    <a href="/teachers">All Teachers →</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('teacherForm');
+        const successMsg = document.getElementById('successMessage');
+
+        document.getElementById('name').addEventListener('blur', validateName);
+        document.getElementById('email').addEventListener('blur', validateEmail);
+        document.getElementById('phone').addEventListener('blur', validatePhone);
+        document.getElementById('subject').addEventListener('change', validateSubject);
+
+        function validateName() {
+            const name = document.getElementById('name');
+            const error = document.getElementById('nameError');
+            const value = name.value.trim();
+
+            if (!value) {
+                showError(name, error, 'Name is required');
+                return false;
+            } else if (value.length < 2 || value.length > 50) {
+                showError(name, error, 'Name must be 2-50 characters');
+                return false;
+            } else {
+                clearError(name, error);
+                return true;
+            }
+        }
+
+        function validateEmail() {
+            const email = document.getElementById('email');
+            const error = document.getElementById('emailError');
+            const value = email.value.trim();
+            const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            if (!value) {
+                showError(email, error, 'Email is required');
+                return false;
+            } else if (!pattern.test(value)) {
+                showError(email, error, 'Invalid email format');
+                return false;
+            } else {
+                clearError(email, error);
+                return true;
+            }
+        }
+
+        function validatePhone() {
+            const phone = document.getElementById('phone');
+            const error = document.getElementById('phoneError');
+            const value = phone.value.trim();
+            const pattern = /^[0-9\-\+\(\)\s]{10,}$/;
+
+            if (!value) {
+                showError(phone, error, 'Phone is required');
+                return false;
+            } else if (!pattern.test(value)) {
+                showError(phone, error, 'Invalid phone number (10+ digits)');
+                return false;
+            } else {
+                clearError(phone, error);
+                return true;
+            }
+        }
+
+        function validateSubject() {
+            const subject = document.getElementById('subject');
+            const error = document.getElementById('subjectError');
+            const value = subject.value;
+
+            if (!value) {
+                showError(subject, error, 'Subject is required');
+                return false;
+            } else {
+                clearError(subject, error);
+                return true;
+            }
+        }
+
+        function showError(input, errorEl, message) {
+            input.classList.add('error');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        function clearError(input, errorEl) {
+            input.classList.remove('error');
+            errorEl.classList.remove('show');
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!validateName() || !validateEmail() || !validatePhone() || !validateSubject()) {
+                return;
+            }
+
+            const btn = document.querySelector('.btn-submit');
+            btn.disabled = true;
+            btn.textContent = 'Registering...';
+
+            try {
+                const response = await fetch('/api/register-teacher', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('name').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value,
+                        subject: document.getElementById('subject').value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    successMsg.classList.add('show');
+                    document.getElementById('successText').textContent = data.message;
+                    form.reset();
+                    
+                    setTimeout(() => {
+                        successMsg.classList.remove('show');
+                    }, 5000);
+                } else {
+                    alert('Error: ' + data.message);
+                    if (data.errors) {
+                        Object.keys(data.errors).forEach(field => {
+                            const input = document.getElementById(field);
+                            const error = document.getElementById(field + 'Error');
+                            if (input && error) {
+                                showError(input, error, data.errors[field]);
+                            }
+                        });
+                    }
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Register Now';
+            }
+        });
+    </script>
+</body>
+</html>
